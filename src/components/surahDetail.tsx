@@ -31,26 +31,35 @@ const SurahDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Ambil nama surah dari endpoint data
-    axios
-      .get(`https://api.npoint.io/99c279bb173a6e28359c/data`)
-      .then((res) => {
-        const surah = res.data.find((s: any) => s.nomor === Number(nomor));
+    const fetchSurah = async () => {
+      try {
+        // Ambil semua surah untuk dapat nama surah
+        const surahRes = await axios.get(
+          "https://api.npoint.io/99c279bb173a6e28359c/data"
+        );
+        const surah = surahRes.data.find(
+          (s: any) => s.nomor === Number(nomor)
+        );
         if (surah) setNama(surah.nama);
-      });
 
-    // Ambil data ayat
-    axios
-      .get<Ayat[]>(`https://api.npoint.io/99c279bb173a6e28359c/surat/${nomor}`)
-      .then((response) => {
-        const cleanedData = response.data.map((ayat) => ({
+        // Ambil ayat surah tertentu
+        const ayatRes = await axios.get<Ayat[]>(
+          `https://api.npoint.io/99c279bb173a6e28359c/surat/${nomor}`
+        );
+        const cleanedData = ayatRes.data.map((ayat) => ({
           ...ayat,
           tr: cleanText(ayat.tr),
           id: cleanText(ayat.id),
         }));
         setAyatList(cleanedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchSurah();
 
     // Load bookmark dari localStorage
     const saved = localStorage.getItem("bookmarks");
@@ -61,33 +70,33 @@ const SurahDetail: React.FC = () => {
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   }, [bookmarks]);
 
+  if (loading) return <p className="text-center mt-8">Loading...</p>;
 
-  if (loading) return <p>Loading...</p>;
+  return (
+    <>
+      <Navbar />
+      <div className="max-w-3xl mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-6 text-center">
+          {nama ? `Surah ${nama}` : `Surah ${nomor}`}
+        </h1>
 
-     return (
-      <>
-      <div>
-        <Navbar />
+        {ayatList.map((ayat) => (
+          <div
+            key={ayat.nomor}
+            className="mb-4 p-4 border rounded-lg bg-white shadow-sm hover:bg-gray-50 transition"
+          >
+            <p className="font-arab text-2xl mb-3 leading-relaxed text-right">
+              {ayat.ar}
+            </p>
+            <p className="text-gray-700 italic mb-2">{ayat.tr}</p>
+            <p className="text-green-700">{ayat.id}</p>
+          </div>
+        ))}
       </div>
-    <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Surah {nomor}</h1>
 
-      {ayatList.map((ayat) => (
-        <div
-          key={ayat.nomor}
-          className="mb-4 p-4 border rounded-lg bg-white shadow-sm hover:bg-gray-50 transition"
-        >
-          <p className="font-arab text-2xl mb-3 leading-relaxed text-right">
-            {ayat.ar}
-          </p>
-          <p className="text-gray-700 italic mb-2">{ayat.tr}</p>
-          <p className="text-green-700">{ayat.id}</p>
-        </div>
-      ))}
-    </div>
-    <footer className="bg-black text-white text-center p-4">
-           &copy; 2025 Al-Qur'an Digital. Semua Hak Dilindungi
-        </footer>
+      <footer className="bg-black text-white text-center p-4">
+        &copy; 2025 Al-Qur'an Digital. Semua Hak Dilindungi
+      </footer>
     </>
   );
 };
