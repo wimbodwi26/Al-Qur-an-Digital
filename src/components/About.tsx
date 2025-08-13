@@ -5,16 +5,14 @@ const About: React.FC = () => {
     return (
         <>
         <div>
-            <Navbar/ >
+            <Navbar />
         </div>
-        <div className="relative min-h-screen flex items-center justify-center bg-gray-900">
-            <video className="absolute top-0 left-0 w-full h-full object-cover brightness-75"
-            autoPlay
-            muted
-            loop
-            playsInline>
-                <source src="/public/video/47053-450995419_small.mp4" />
-            </video>
+        <div
+            className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+            style={{ backgroundImage: "url('/img/mosque-3725372_1280.jpg')" }}
+        >
+            
+            <div className="absolute top-0 left-0 w-full h-full bg-black/40"></div>
 
             <div className="relative z-10 max-w-3xl bg-white bg-opacity-80 p-8 rounded-lg shadow-lg text-center">
                 <h1 className="text-4xl font-bold text-green-700 mb-6">Menyelami Hikmah Al-Qur'an Digital</h1>
@@ -44,4 +42,4 @@ const About: React.FC = () => {
     )
 }
 
-export default About
+export default About;
