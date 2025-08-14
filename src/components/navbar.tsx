@@ -16,17 +16,15 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
       className="bg-white shadow-md px-6 py-3 fixed w-full top-0 z-50"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo desktop */}
+
         <div className="hidden md:block text-2xl font-bold text-green-700">
           <Link to="/">Al-Qur'an</Link>
         </div>
 
-        {/* Search desktop */}
         <div className="hidden md:block flex-1 max-w-md mx-4">
           <SearchBar handleSearch={onSearch || (() => {})} />
         </div>
 
-        {/* Menu desktop */}
         <ul className="hidden md:flex space-x-8 text-green-700 font-semibold">
           <li>
             <Link to="/about" className="hover:text-green-900">
@@ -45,19 +43,16 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
           </li>
         </ul>
 
-        {/* Mobile navbar: Home | Search | Menu button */}
         <div className="flex items-center space-x-3 md:hidden text-green-700 w-full px-4">
           {/* Home icon */}
           <Link to="/" aria-label="Home">
             <HiHome className="w-6 h-6 cursor-pointer" aria-hidden="true" />
           </Link>
 
-          {/* Search bar */}
           <div className="flex-grow">
             <SearchBar handleSearch={onSearch || (() => {})} />
           </div>
 
-          {/* Menu toggle button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

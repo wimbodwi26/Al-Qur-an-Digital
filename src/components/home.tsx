@@ -6,12 +6,10 @@ import { Link } from "react-router-dom";
 const Home: React.FC = () => {
     return (
         <>
-        {/* Navbar */}
         <div className="relative z-50">
             <Navbar />
         </div>
 
-        {/* Background Image & Overlay */}
         <div
             className="relative w-full h-screen overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: "url('/img/sultan-qaboos-grand-mosque-5963726_1280.jpg')" }}

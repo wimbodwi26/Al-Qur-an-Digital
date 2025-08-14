@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import type { Bookmark } from "./types";
 import Navbar from "./navbar";
-
-interface Ayat {
-  ar: string;
-  id: string;
-  nomor: number;
-  tr: string;
-}
+import type { Ayat, Bookmark, Surah } from "./types";
 
 function cleanText(text: string): string {
   if (!text) return "";
@@ -25,7 +18,7 @@ function cleanText(text: string): string {
 
 const SurahDetail: React.FC = () => {
   const { nomor } = useParams<{ nomor: string }>();
-  const [nama, setNama] = useState<string>("");
+  const [nama, setNama] = useState("");
   const [ayatList, setAyatList] = useState<Ayat[]>([]);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,27 +26,29 @@ const SurahDetail: React.FC = () => {
   useEffect(() => {
     const fetchSurah = async () => {
       try {
-        // Ambil semua surah untuk dapat nama surah
-        const surahRes = await axios.get(
-          "https://api.npoint.io/99c279bb173a6e28359c/data"
+        
+        const surahRes = await axios.get<Surah[]>(
+          "https://al-quran-8d642.firebaseio.com/data.json?print=pretty"
         );
-        const surah = surahRes.data.find(
-          (s: any) => s.nomor === Number(nomor)
-        );
+       
+        const surah = surahRes.data.find((s) => s.nomor == Number(nomor));
         if (surah) setNama(surah.nama);
 
-        // Ambil ayat surah tertentu
+        
         const ayatRes = await axios.get<Ayat[]>(
-          `https://api.npoint.io/99c279bb173a6e28359c/surat/${nomor}`
+          `https://al-quran-8d642.firebaseio.com/surat/${nomor}.json?print=pretty`
         );
+
         const cleanedData = ayatRes.data.map((ayat) => ({
           ...ayat,
           tr: cleanText(ayat.tr),
           id: cleanText(ayat.id),
         }));
+
         setAyatList(cleanedData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setAyatList([]);
       } finally {
         setLoading(false);
       }
@@ -61,9 +56,15 @@ const SurahDetail: React.FC = () => {
 
     fetchSurah();
 
-    // Load bookmark dari localStorage
+    
     const saved = localStorage.getItem("bookmarks");
-    if (saved) setBookmarks(JSON.parse(saved));
+    if (saved) {
+      try {
+        setBookmarks(JSON.parse(saved));
+      } catch {
+        setBookmarks([]);
+      }
+    }
   }, [nomor]);
 
   useEffect(() => {

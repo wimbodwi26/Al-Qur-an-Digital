@@ -8,10 +8,18 @@ export interface Surah {
   keterangan: string;
 }
 
+export interface Ayat {
+  ar: string;
+  id: string;
+  nomor: number;
+  tr: string;
+}
+
 export interface Bookmark {
   id: string;
   nomor: number;
   nama: string;
   ayatNumber?: number;
 }
+
 
